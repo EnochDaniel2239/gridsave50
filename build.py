@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).parent
 OUT_DIR = BASE_DIR / "dist"
 
 # Replace these placeholder URLs with your approved affiliate/quote links
-SITE_BASE_URL = "https://solar-calc.pages.dev"
+SITE_BASE_URL = "https://gridsave50.pages.dev"
 QUOTE_URL = "https://example.com/get-solar-quotes"
 BATTERY_URL = "https://example.com/backup-batteries"
 
