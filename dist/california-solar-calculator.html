@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>California Solar Savings & Bill Offset Calculator | GridSave50</title>
+  <meta name="description" content="Estimate California solar panel system size, 1-year, 10-year, and 25-year electricity savings using $0.312/kWh and 5.8 peak sun hours." />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+  <header class="border-b border-slate-800 bg-slate-900/70 backdrop-blur sticky top-0 z-10">
+    <div class="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between">
+      <a href="/index.html" class="font-bold text-lg tracking-tight text-emerald-400">
+        GridSave<span class="text-slate-100">50</span>
+      </a>
+      <a href="/index.html" class="text-xs sm:text-sm text-slate-300 hover:text-white transition">
+        All 50 States &rarr;
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <div class="mb-6">
+      <h1 class="text-2xl sm:text-3xl font-bold text-white">California Solar Savings Calculator</h1>
+      <p class="text-slate-400 mt-1.5 text-sm sm:text-base">Estimate solar system size and multi-year electric bill savings in California (CA).</p>
+    </div>
+
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <section class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-5">
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="bg-slate-950 border border-slate-800 rounded-lg p-3">
+            <div class="text-slate-400 text-xs">Avg. California Rate</div>
+            <div id="rateDisplay" class="text-lg font-semibold text-emerald-400 mt-0.5">$0.312/kWh</div>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 rounded-lg p-3">
+            <div class="text-slate-400 text-xs">Peak Sun Hours</div>
+            <div id="sunDisplay" class="text-lg font-semibold text-amber-400 mt-0.5">5.8 hrs/day</div>
+          </div>
+        </div>
+
+        <div>
+          <label for="billInput" class="block text-sm font-medium text-slate-200 mb-1.5">
+            Monthly Electric Bill ($)
+          </label>
+          <input id="billInput" type="number" min="30" max="2000" step="10" value="180"
+            class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-400" />
+          <input id="billSlider" type="range" min="40" max="1000" step="10" value="180"
+            class="w-full mt-2 accent-emerald-400" />
+        </div>
+
+        <div>
+          <label for="offsetSelect" class="block text-sm font-medium text-slate-200 mb-1.5">
+            Target Bill Offset (%)
+          </label>
+          <select id="offsetSelect"
+            class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-400">
+            <option value="0.5">50% Offset (Starter / Shading)</option>
+            <option value="0.8" selected>80% Offset (Typical System)</option>
+            <option value="1.0">100% Offset (Full Bill Target)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="inflationInput" class="block text-sm font-medium text-slate-200 mb-1.5">
+            Assumed Annual Utility Rate Increase (%)
+          </label>
+          <input id="inflationInput" type="number" min="0" max="15" step="0.5" value="3.5"
+            class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-400" />
+        </div>
+      </section>
+
+      <section class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between space-y-5">
+        <div class="space-y-4">
+          <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Estimated Results</div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-slate-950 border border-slate-800 rounded-lg p-3.5">
+              <div class="text-xs text-slate-400">Est. System Size</div>
+              <div id="sysSize" class="text-xl font-bold text-white mt-1">-- kW</div>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-lg p-3.5">
+              <div class="text-xs text-slate-400">Year 1 Savings</div>
+              <div id="yr1Savings" class="text-xl font-bold text-emerald-400 mt-1">$--</div>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-lg p-3.5">
+              <div class="text-xs text-slate-400">10-Year Savings</div>
+              <div id="yr10Savings" class="text-xl font-bold text-emerald-300 mt-1">$--</div>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-lg p-3.5">
+              <div class="text-xs text-slate-400">25-Year Savings</div>
+              <div id="yr25Savings" class="text-xl font-bold text-emerald-400 mt-1">$--</div>
+            </div>
+          </div>
+
+          <div class="bg-slate-950/90 border border-slate-800 rounded-lg p-3.5 text-xs text-slate-300 flex items-center justify-between">
+            <span>Est. Gross System Cost (~$2.85/W):</span>
+            <span id="grossCost" class="font-semibold text-white">$--</span>
+          </div>
+        </div>
+
+        <div class="space-y-2.5 pt-2">
+          <a href="https://example.com/get-solar-quotes" target="_blank" rel="noopener noreferrer sponsored"
+            class="block w-full text-center bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold py-3 px-4 rounded-lg transition">
+            Compare California Solar Quotes &rarr;
+          </a>
+          <a href="https://example.com/backup-batteries" target="_blank" rel="noopener noreferrer sponsored"
+            class="block w-full text-center bg-slate-800 hover:bg-slate-700 text-slate-100 font-medium py-2.5 px-4 rounded-lg transition text-sm">
+            Explore Home Backup Batteries & Power Stations
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <section class="mt-8 bg-slate-900/60 border border-slate-800 rounded-xl p-5">
+      <h2 class="text-base font-semibold text-white mb-2">How California Solar Math Works Here</h2>
+      <p class="text-sm text-slate-400 leading-relaxed">
+        With a baseline electricity rate of <strong class="text-slate-200">$0.312/kWh</strong> and roughly
+        <strong class="text-slate-200">5.8 peak sun hours/day</strong> in California, a higher monthly
+        bill requires a larger solar array to offset your target percentage of usage. Multi-year savings accumulate as
+        annual utility rates adjust by your chosen inflation rate.
+      </p>
+      <div class="mt-4">
+        <div class="text-xs text-slate-400 mb-2">Jump to another state:</div>
+        <div class="flex flex-wrap gap-1.5"><a href="/alabama-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">AL</a><a href="/alaska-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">AK</a><a href="/arizona-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">AZ</a><a href="/arkansas-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">AR</a><a href="/california-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">CA</a><a href="/colorado-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">CO</a><a href="/connecticut-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">CT</a><a href="/delaware-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">DE</a><a href="/florida-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">FL</a><a href="/georgia-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">GA</a><a href="/hawaii-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">HI</a><a href="/idaho-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">ID</a><a href="/illinois-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">IL</a><a href="/indiana-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">IN</a><a href="/iowa-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">IA</a><a href="/kansas-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">KS</a><a href="/kentucky-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">KY</a><a href="/louisiana-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">LA</a><a href="/maine-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">ME</a><a href="/maryland-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">MD</a><a href="/massachusetts-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">MA</a><a href="/michigan-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">MI</a><a href="/minnesota-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">MN</a><a href="/mississippi-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">MS</a><a href="/missouri-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">MO</a><a href="/montana-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">MT</a><a href="/nebraska-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">NE</a><a href="/nevada-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">NV</a><a href="/new-hampshire-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">NH</a><a href="/new-jersey-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">NJ</a><a href="/new-mexico-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">NM</a><a href="/new-york-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">NY</a><a href="/north-carolina-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">NC</a><a href="/north-dakota-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">ND</a><a href="/ohio-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">OH</a><a href="/oklahoma-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">OK</a><a href="/oregon-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">OR</a><a href="/pennsylvania-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">PA</a><a href="/rhode-island-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">RI</a><a href="/south-carolina-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">SC</a><a href="/south-dakota-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">SD</a><a href="/tennessee-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">TN</a><a href="/texas-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">TX</a><a href="/utah-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">UT</a><a href="/vermont-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">VT</a><a href="/virginia-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">VA</a><a href="/washington-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">WA</a><a href="/west-virginia-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">WV</a><a href="/wisconsin-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">WI</a><a href="/wyoming-solar-calculator.html" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hover:border-emerald-500/60 text-xs text-slate-300">WY</a></div>
+      </div>
+    </section>
+
+    <script>
+      const RATE = 0.312;
+      const SUN_HOURS = 5.8;
+      const DERATE = 0.80; // system performance derate factor
+      const COST_PER_WATT = 2.85;
+
+      const billInput = document.getElementById("billInput");
+      const billSlider = document.getElementById("billSlider");
+      const offsetSelect = document.getElementById("offsetSelect");
+      const inflationInput = document.getElementById("inflationInput");
+
+      function fmtMoney(num) {
+        return "$" + Math.round(num).toLocaleString("en-US");
+      }
+
+      function calculate() {
+        const bill = Math.max(0, parseFloat(billInput.value) || 0);
+        const offset = parseFloat(offsetSelect.value) || 0.8;
+        const growth = (parseFloat(inflationInput.value) || 0) / 100;
+
+        const targetMonthlySavings = bill * offset;
+        const annualKwhTarget = (targetMonthlySavings / RATE) * 12;
+        const systemKw = Math.max(1, annualKwhTarget / (SUN_HOURS * 365 * DERATE));
+        const grossSystemCost = systemKw * 1000 * COST_PER_WATT;
+
+        let cum1 = 0, cum10 = 0, cum25 = 0;
+        for (let year = 1; year <= 25; year++) {
+          const yrSavings = targetMonthlySavings * 12 * Math.pow(1 + growth, year - 1);
+          if (year === 1) cum1 = yrSavings;
+          if (year <= 10) cum10 += yrSavings;
+          cum25 += yrSavings;
+        }
+
+        document.getElementById("sysSize").textContent = systemKw.toFixed(1) + " kW";
+        document.getElementById("yr1Savings").textContent = fmtMoney(cum1);
+        document.getElementById("yr10Savings").textContent = fmtMoney(cum10);
+        document.getElementById("yr25Savings").textContent = fmtMoney(cum25);
+        document.getElementById("grossCost").textContent = fmtMoney(grossSystemCost);
+      }
+
+      billSlider.addEventListener("input", () => {
+        billInput.value = billSlider.value;
+        calculate();
+      });
+      billInput.addEventListener("input", () => {
+        billSlider.value = billInput.value;
+        calculate();
+      });
+      offsetSelect.addEventListener("change", calculate);
+      inflationInput.addEventListener("input", calculate);
+
+      calculate();
+    </script>
+    
+
+    <footer class="mt-12 pt-6 border-t border-slate-800 text-xs text-slate-500 space-y-2">
+      <p>
+        <strong>Disclaimer:</strong> Estimates are illustrative planning models based on state average utility rates,
+        peak sun hours, system sizing, and assumed utility bill inflation. Actual quotes, roof shading, net metering
+        rules, and incentives vary by utility provider and property.
+      </p>
+      <p>
+        <strong>Affiliate Disclosure:</strong> This site may earn a commission or referral fee if you click partner
+        quote or equipment links and complete a qualifying action, at no extra cost to you.
+      </p>
+    </footer>
+  </main>
+</body>
+</html>
