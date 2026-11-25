@@ -273,6 +273,10 @@ def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     with open(BASE_DIR / "data.json", "r", encoding="utf-8") as f:
         states = json.load(f)
+    for html_file in BASE_DIR.glob("google*.html"):
+        (OUT_DIR / html_file.name).write_text(
+            html_file.read_text(encoding="utf-8"), encoding="utf-8"
+        )
 
     (OUT_DIR / "index.html").write_text(build_index_page(states), encoding="utf-8")
 
